@@ -61,7 +61,7 @@ Prevents crashes due to invalid input
 🧰 Tech Stack
 Category	Technologies
 Language	Python 3.8+
-ML Framework	Scikit-Learn
+ML Framework	Scikit-Learn 
 Models Used	RandomForestClassifier & RandomForestRegressor
 GUI	Tkinter
 Data Handling	Pandas, NumPy
