@@ -3,7 +3,7 @@
 Stress is a leading cause of anxiety, depression, road rage, and reduced productivity.
 This project aims to predict stress levels using a trained ML model and provide real-time actionable suggestions through a user-friendly desktop app.
 
-The application is designed for:
+The application is designed for:-
 
 🧑 Students
 
