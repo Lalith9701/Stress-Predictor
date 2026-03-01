@@ -1,4 +1,4 @@
-# -*- mode: python ; coding: utf-8 -*-
+#stress.spec
 
 
 a = Analysis(
