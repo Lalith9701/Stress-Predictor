@@ -1,3 +1,4 @@
+#PYZ-00.toc
 ('C:\\Users\\HOA3COB\\Desktop\\AI\\build\\Stress\\PYZ-00.pyz',
  [('PIL',
    'C:\\Users\\HOA3COB\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\PIL\\__init__.py',
