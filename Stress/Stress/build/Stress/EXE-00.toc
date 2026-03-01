@@ -1,3 +1,4 @@
+#EXE-00.toc
 ('C:\\Users\\HOA3COB\\Desktop\\AI\\dist\\Stress.exe',
  True,
  False,
