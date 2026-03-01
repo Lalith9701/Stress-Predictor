@@ -1,3 +1,4 @@
+#stress.py
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -14,20 +15,19 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from PIL import Image, ImageTk
 
-# Get the correct path to external files when running the executable
-if getattr(sys, 'frozen', False):  # If running as a frozen executable (pyinstaller)
+
+if getattr(sys, 'frozen', False):  
     base_path = sys._MEIPASS
 else:
     base_path = os.path.dirname(os.path.abspath(__file__))
 
-# Paths
 model_path = os.path.join(base_path, 'stress_cat_model.pkl')
 num_model_path = os.path.join(base_path, 'stress_num_model.pkl')
 scaler_path = os.path.join(base_path, 'scaler.pkl')
 file_path = os.path.join(base_path, 'Final_Stress_Dataset.csv')
 bg_image_path = os.path.join(base_path, 'stress.jpg')  # optional
 
-# Try loading models/data with helpful error messages
+
 try:
     cat_model = joblib.load(model_path)
 except Exception as e:
@@ -53,7 +53,7 @@ except Exception as e:
     print(f"Could not load dataset at {file_path}: {e}")
     data = None
 
-# If data is present, prepare encoders and columns (fallback safe defaults if not)
+
 categorical_columns = ['Gender', 'Occupation', 'Traffic_Peak_Time', 'Road_Condition', 'Climate_condition',
                        'Medical_Problems', 'Suggestions', 'Martial_Status', 'BP', 'Traffic_congestion', 'Stressed',
                        'Late_to_work', 'State', 'Area', 'District', 'City', 'reason_of_traffic', 'Transport_Mode',
@@ -69,26 +69,26 @@ label_encoders = {}
 label_encoders_target = {}
 
 if data is not None:
-    # Encode categorical columns
+    
     for col in categorical_columns:
         le = LabelEncoder()
-        # Ensure all values are strings to avoid unexpected types
+        
         data[col] = data[col].astype(str)
         try:
             data[col] = le.fit_transform(data[col])
         except Exception:
-            # If something fails, still store the encoder with single class to avoid KeyError later
+            
             le.fit(['Unknown'])
             data[col] = le.transform(data[col].fillna('Unknown').astype(str))
         label_encoders[col] = le
 
-    # Fill numeric missing values
+    
     data.fillna(data.median(numeric_only=True), inplace=True)
 
     categorical_target_cols = ['Response_in_traffic', 'Stress_Impact']
     numerical_target_cols = ['Stress_Level', 'Anxiety_Levels', 'Depression_Levels']
 
-    # Prepare target encoders
+  
     for col in categorical_target_cols:
         le = LabelEncoder()
         # defensive: cast to str
@@ -99,7 +99,7 @@ if data is not None:
         label_encoders_target[col] = le
 
 else:
-    # If data not loaded, create simple placeholder encoders with a safe default value
+
     for col in categorical_columns:
         le = LabelEncoder()
         le.fit(['Unknown'])
@@ -109,21 +109,19 @@ else:
         le.fit(['Less', 'Mild', 'Severe'])
         label_encoders_target[col] = le
 
-# Prediction Function
 def predict_stress():
     try:
-        # collect inputs
+       
         input_rows = []
         for col in categorical_columns:
             val = inputs[col].get().strip()
             if val == "":
-                # default to first class if empty
+               
                 classes = list(label_encoders[col].classes_)
                 if len(classes) > 0:
                     val = classes[0]
                 else:
                     val = 'Unknown'
-            # if value unseen, LabelEncoder.transform will raise -> map to 'Unknown' if present
             try:
                 enc = label_encoders[col].transform([val])[0]
             except Exception:
