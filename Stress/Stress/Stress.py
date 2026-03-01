@@ -236,7 +236,7 @@ try:
     if os.path.exists(bg_image_path):
         img = Image.open(bg_image_path)
         try:
-            resample = Image.Resampling.LANCZOS  # Pillow >=9.1
+            resample = Image.Resampling.LANCZOS  
         except AttributeError:
             resample = Image.LANCZOS
         img = img.resize((1000, 700), resample)
