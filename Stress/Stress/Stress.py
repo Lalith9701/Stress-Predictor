@@ -1,4 +1,3 @@
-#stress.py
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -135,13 +134,13 @@ def predict_stress():
         for col in numeric_columns:
             raw = inputs[col].get().strip()
             if raw == "":
-                # If empty numeric, default to 0
+                
                 num = 0.0
             else:
                 try:
                     num = float(raw)
                 except ValueError:
-                    # invalid numeric input
+                    
                     messagebox.showerror("Input error", f"Numeric field '{col}' expects a number. Got '{raw}'.")
                     return
             input_rows.append(num)
@@ -151,42 +150,41 @@ def predict_stress():
         if scaler is not None:
             input_arr_scaled = scaler.transform(input_arr)
         else:
-            input_arr_scaled = input_arr  # fallback
+            input_arr_scaled = input_arr  
 
-        # Categorical predictions
+        
         if cat_model is not None:
-            cat_preds = cat_model.predict(input_arr_scaled)  # expected shape (1, n_cat_targets) or (1,) depending model
+            cat_preds = cat_model.predict(input_arr_scaled)  
         else:
-            cat_preds = np.array([[0, 0]])  # fallback numeric-encoded labels
+            cat_preds = np.array([[0, 0]])  
 
-        # Numerical predictions
+        
         if num_model is not None:
-            num_preds = num_model.predict(input_arr_scaled)  # expected shape (1, 3)
+            num_preds = num_model.predict(input_arr_scaled)  
         else:
             num_preds = np.array([[5.0, 5.0, 5.0]])
 
-        # Decode categorical predictions safely
-        # if cat_preds is 1D, make it 2D
+
         cat_preds = np.array(cat_preds)
         if cat_preds.ndim == 1:
-            # if only one target predicted, create list; but we expect two targets (Response_in_traffic, Stress_Impact)
+            
             cat_preds = cat_preds.reshape(1, -1)
 
-        # Response_in_traffic decode
+        
         try:
             resp_encoded = int(cat_preds[0][0])
             Response_in_Traffic = label_encoders_target['Response_in_traffic'].inverse_transform([resp_encoded])[0]
         except Exception:
             Response_in_Traffic = label_encoders_target['Response_in_traffic'].classes_[0]
 
-        # Stress_Impact decode
+        
         try:
             stress_imp_encoded = int(cat_preds[0][1])
             Stress_Impact = label_encoders_target['Stress_Impact'].inverse_transform([stress_imp_encoded])[0]
         except Exception:
             Stress_Impact = label_encoders_target['Stress_Impact'].classes_[0]
 
-        # Numerical outputs and clipping
+        
         Stress_Level = float(num_preds[0][0])
         Anxiety_Levels = float(num_preds[0][1])
         Depression_Levels = float(num_preds[0][2])
@@ -195,7 +193,7 @@ def predict_stress():
         Anxiety_Levels = float(np.clip(Anxiety_Levels, 0, 10))
         Depression_Levels = float(np.clip(Depression_Levels, 0, 10))
 
-        # Suggestion based on stress level
+        
         if Stress_Level >= 7:
             Stress_Impact = 'Severe'
             tip = ("Deep breaths—your safety matters more than the rush. "
@@ -208,7 +206,7 @@ def predict_stress():
             Stress_Impact = 'Less'
             tip = ("Relax, listen to a podcast or music, and focus on the present moment.")
 
-        # Show results (also print to console so VSCode terminal shows it)
+        
         result_text = (
             f"Stress Level: {Stress_Level:.2f}\n"
             f"Anxiety Levels: {Anxiety_Levels:.2f}\n"
@@ -221,17 +219,17 @@ def predict_stress():
         messagebox.showinfo("Prediction Results", result_text)
 
     except Exception as e:
-        # print traceback for debugging in console + notify user
+ 
         tb = traceback.format_exc()
         print("Exception in predict_stress():\n", tb)
         messagebox.showerror("Error", f"An error occurred. See console for details.\n{str(e)}")
 
-# Tkinter UI Setup
+
 root = tk.Tk()
 root.title("Stress Level Predictor")
 root.geometry("1000x700")
 
-# Background image (optional)
+
 try:
     if os.path.exists(bg_image_path):
         img = Image.open(bg_image_path)
